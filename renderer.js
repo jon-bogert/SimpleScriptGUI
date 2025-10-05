@@ -23,14 +23,27 @@ function renderEditor()
     {
         let textBlock = seq.blocks[i];
 
+        if (i === editIndex)
+        {
+            const lineDiv = document.createElement('div');
+            lineDiv.className = 'line-selected';
+            
+            lineDiv.contentEditable = true;
+            lineDiv.spellcheck = true;
+            lineDiv.textContent = textBlock.content;
+
+            lineDiv.addEventListener('input', () => {
+                textBlock.content = lineDiv.textContent;
+            });
+
+            editorDiv.appendChild(lineDiv);
+            continue;
+        }
+
         const p = document.createElement('p');
         p.textContent = (textBlock.type === 'Parenthetical') ? '(' + textBlock.content + ')' : textBlock.content;
         
-        if (i === editIndex)
-        {
-            p.className = "line-selected";
-        }
-        else if (textBlock.type === 'Slug')
+        if (textBlock.type === 'Slug')
         {
             p.className = "slug-line";
         }
