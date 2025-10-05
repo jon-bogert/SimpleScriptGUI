@@ -2,6 +2,7 @@ const { Project } = require('./project');
 
 let proj = null;
 let sceneIndex = -1;
+let editIndex = -1;
 
 function renderEditor()
 {
@@ -18,12 +19,18 @@ function renderEditor()
     let seq = proj.getSequence(sceneIndex);
     pageTitle.innerText = seq.name;
 
-    for (const textBlock of seq.blocks)
+    for (let i = 0; i < seq.blocks.length; ++i)
     {
+        let textBlock = seq.blocks[i];
+
         const p = document.createElement('p');
         p.textContent = (textBlock.type === 'Parenthetical') ? '(' + textBlock.content + ')' : textBlock.content;
         
-        if (textBlock.type === 'Slug')
+        if (i === editIndex)
+        {
+            p.className = "line-selected";
+        }
+        else if (textBlock.type === 'Slug')
         {
             p.className = "slug-line";
         }
@@ -39,6 +46,9 @@ function renderEditor()
         {
             p.className = 'dialogue'
         }
+        p.addEventListener('click', () => {
+            setEditLine(i);
+        });
         editorDiv.appendChild(p);
     }
 }
@@ -69,16 +79,22 @@ function renderSidebar()
 
 
         p.addEventListener('click', () => {
-            loadSequence(i);
+            loadSequence(i, -1);
         });
 
         seqDiv.appendChild(p);
     }
 }
 
-function loadSequence(index)
+function setEditLine(lineIndex)
+{
+    loadSequence(sceneIndex, lineIndex)
+}
+
+function loadSequence(index, lineIndex)
 {
     sceneIndex = index;
+    editIndex = lineIndex;
     renderSidebar();
     renderEditor();
 }

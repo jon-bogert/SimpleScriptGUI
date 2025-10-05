@@ -82,20 +82,35 @@ body {
 }
 
 .dialogue {
+    cursor: pointer;
+    user-select: none;
     padding-bottom: 10px;
     padding-left: 100px;
 }
 
 .action-line {
+    cursor: pointer;
+    user-select: none;
     padding-bottom: 10px;
 }
 
 .slug-line {
+    cursor: pointer;
+    user-select: none;
     padding-bottom: 10px;
     font-weight: bold;
 }
 
 .parenthetical {
+    cursor: pointer;
+    user-select: none;
     padding-bottom: 10px;
     padding-left: 150px;
+}
+
+.line-selected {
+    cursor: pointer;
+    user-select: none;
+    color: red;
+    padding-bottom: 10px;
 }
