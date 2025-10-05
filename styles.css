@@ -41,6 +41,42 @@ body {
     height: 100vh;
 }
 
+.scene-title {
+    padding-bottom: 20px;
+    user-select: none;
+}
+
+.sequence-list {
+    padding: 0px;
+}
+
+.sequence-entry {
+    cursor: pointer;
+    user-select: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+}
+
+.sequence-entry:hover {
+    background-color: #333;  /* change to any color you like */
+    color: #fff;             /* optional: change text color on hover */
+}
+
+.sequence-entry-selected {
+    cursor: pointer;
+    user-select: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    font-weight: bold;
+}
+
+.sequence-entry-selected:hover {
+    background-color: #333;  /* change to any color you like */
+    color: #fff;             /* optional: change text color on hover */
+}
+
 .editor {
     overflow-y: auto;
 }
