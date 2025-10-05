@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XeDoc</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar">
+            <div class="section-heading">
+                <h3>Scenes Pages</h3>
+                <!--
+                <button id="new-page-btn" class="new-page-btn">+</button>
+                <button id="sidebar-collapse" class="sidebar-collapse">⟨</button>
+            -->
+            </div>
+            <div class="page-tree" id="page-tree"></div>
+        </div>
+
+        <!-- Resize handle -->
+        <div class="resize-handle" id="resize-handle"></div>
+
+        <!-- Main content -->
+        <div class="main-content" id="main-content">
+            <div class="section-heading">
+                <h1 id="page-title">Untitled Scene</h1>
+                <br>
+            </div>
+            <div id="editor" class="editor" contenteditable="false">Test Dialogue</div>
+        </div>
+
+        <!-- Collapsed sidebar toggle -->
+        <button id="sidebar-expand" class="sidebar-expand" style="display: none;">⟩</button>
+    </div>
+    <script src="renderer.js"></script>
+</body>
+</html>
