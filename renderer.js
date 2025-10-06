@@ -30,11 +30,17 @@ function renderEditor()
         // Character Names
         if (textBlock.type === 'Parenthetical' || textBlock.type === 'Dialogue')
         {
-            if (!wasLastBlockDialogue)
+            if (!wasLastBlockDialogue || textBlock.character !== lastCharacter)
             {
-                wasLastBlockDialogue = true;
                 const charPara = document.createElement('p');
-                charPara.textContent = (textBlock.character === lastCharacter) ? textBlock.character + ' (CONT\'D)' : textBlock.character;
+                if (textBlock.character === '')
+                {
+                    charPara.textContent = '<UNASSIGNED>';
+                }
+                else
+                {
+                    charPara.textContent = (textBlock.character === lastCharacter) ? textBlock.character + ' (CONT\'D)' : textBlock.character;
+                }
                 charPara.className = 'character-name';
                 if (proj.characters().contains(textBlock.character))
                 {
@@ -44,6 +50,7 @@ function renderEditor()
                 }
                 editorDiv.appendChild(charPara);
             }
+            wasLastBlockDialogue = true;
             lastCharacter = textBlock.character;
         }
         else
@@ -56,29 +63,90 @@ function renderEditor()
         {
             const lineDiv = document.createElement('div');
             lineDiv.className = 'line-selected';
-            
-            lineDiv.contentEditable = true;
-            lineDiv.spellcheck = true;
-            lineDiv.textContent = textBlock.content;
 
-            lineDiv.addEventListener('keydown', (event) => {
+            const setDiv = document.createElement('div');
+            setDiv.className = 'line-settings';
+            
+            // Dropdown
+            const lineTypeLabel = document.createElement('p');
+            lineTypeLabel.className = 'line-settings-label';
+            lineTypeLabel.textContent = 'Type:';
+            setDiv.appendChild(lineTypeLabel);
+
+            const lineType = document.createElement('select');
+            lineType.className = 'line-settings-type';
+            const typeOptions = ['Unassigned', 'Slug', 'Action', 'Parenthetical', 'Dialogue', 'Note'];
+            for (const text of typeOptions)
+            {
+                const option = document.createElement('option');
+                option.value = text;
+                option.textContent = text;
+                lineType.appendChild(option);
+            }
+
+            lineType.value = textBlock.type;
+            lineType.addEventListener('change', (newType) => {
+                console.log('set value to ' + newType.target.value);
+                textBlock.type = newType.target.value;
+                loadSequence(sceneIndex, editIndex);
+            }); 
+            setDiv.appendChild(lineType);
+
+            // Character Assign
+            if (textBlock.type === 'Parenthetical' || textBlock.type === 'Dialogue')
+            {
+                const charFieldLabel = document.createElement('p');
+                charFieldLabel.className = 'line-settings-label';
+                charFieldLabel.textContent = "Character:";
+                setDiv.appendChild(charFieldLabel);
+
+                const charField = document.createElement('div');
+                charField.className = 'character-field';
+                charField.contentEditable = true;
+                charField.textContent = textBlock.character;
+
+                charField.addEventListener('input', () => {
+                    textBlock.character = charField.textContent.toUpperCase();
+                });
+
+                charField.addEventListener('keydown', (event) => {
+                    if (event.key === 'Enter')
+                    {
+                        event.preventDefault();
+                    }
+                });
+
+                setDiv.appendChild(charField);
+            }
+
+            lineDiv.appendChild(setDiv);
+
+            // Line Itself
+            const lineContent = document.createElement('div');
+            lineContent.className = 'line-selected-content';
+            lineContent.contentEditable = true;
+            lineContent.spellcheck = true;
+            lineContent.textContent = textBlock.content;
+            let oldContent = textBlock.content;
+
+            lineContent.addEventListener('keydown', (event) => {
                 if (event.key === 'Enter')
                 {
                     event.preventDefault();
-                    lineDiv.blur();
+                    loadSequence(sceneIndex, -1);
                 }
-            });
-
-            lineDiv.addEventListener('input', () => {
-                textBlock.content = lineDiv.textContent;
-            });
-            lineDiv.addEventListener('blur', () => {
-                if (editIndex === i)
+                else if (event.key === "Escape")
                 {
+                    textBlock.content = oldContent;
                     loadSequence(sceneIndex, -1);
                 }
             });
 
+            lineContent.addEventListener('input', () => {
+                textBlock.content = lineContent.textContent;
+            });
+
+            lineDiv.appendChild(lineContent);
             editorDiv.appendChild(lineDiv);
             continue;
         }

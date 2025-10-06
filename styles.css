@@ -115,11 +115,73 @@ body {
     font-weight: bold;
 }
 
+.line-settings {
+    display: flex;
+    gap: 10px;
+}
+
+.line-settings-label {
+    user-select: none;
+    color: #999;
+    padding: 5px;
+}
+
 .line-selected {
     padding: 10px;
     background-color: #333;
     border: 2px solid #3e3e42;
+    border-radius: 8px;
+}
+
+.line-selected-content {
     cursor: text;
     outline: none;
+}
+
+.character-field {
+    outline: none;
+    cursor: text;
+    margin-bottom: 10px;
+    background-color: #444;
+    border: 2px solid #555;
     border-radius: 8px;
+    padding: 5px;
+    min-width: 200px;
+}
+
+select.line-settings-type {
+    outline: none;
+    font-size: 20px;
+    cursor: pointer;
+    margin-bottom: 10px;
+    background-color: #444;
+    border: 2px solid #555;
+    border-radius: 8px;
+    padding: 5px;
+    color: #d4d4d4;
+    font-family: 'Courier Prime', 'Courier New', Courier, monospace;
+
+    /* Remove native OS styling */
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+
+    /* Optional: Add your own dropdown arrow */
+    background-image: linear-gradient(45deg, transparent 50%, #d4d4d4 50%), 
+                      linear-gradient(-45deg, transparent 50%, #d4d4d4 50%);
+    background-position: right 10px center, right 5px center;
+    background-size: 6px 6px, 6px 6px;
+    background-repeat: no-repeat;;
+    padding-right: 25px;
+}
+
+select.line-settings-type:focus {
+    border-color: #888;
+    background-color: #555;
+}
+
+option {
+    background-color: #444;
+    color: #d4d4d4;
+    font-size: 20px;
 }
