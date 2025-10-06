@@ -108,6 +108,13 @@ body {
     padding-left: 150px;
 }
 
+.character-name {
+    user-select: none;
+    padding: 10px;
+    padding-left: 200px;
+    font-weight: bold;
+}
+
 .line-selected {
     padding: 10px;
     background-color: #333;

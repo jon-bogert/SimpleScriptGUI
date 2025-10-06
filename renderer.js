@@ -19,10 +19,39 @@ function renderEditor()
     let seq = proj.getSequence(sceneIndex);
     pageTitle.innerText = seq.name;
 
+    let lastCharacter = "";
+    let wasLastBlockDialogue = false;
+
+    // Text Block Loop
     for (let i = 0; i < seq.blocks.length; ++i)
     {
         let textBlock = seq.blocks[i];
 
+        // Character Names
+        if (textBlock.type === 'Parenthetical' || textBlock.type === 'Dialogue')
+        {
+            if (!wasLastBlockDialogue)
+            {
+                wasLastBlockDialogue = true;
+                const charPara = document.createElement('p');
+                charPara.textContent = (textBlock.character === lastCharacter) ? textBlock.character + ' (CONT\'D)' : textBlock.character;
+                charPara.className = 'character-name';
+                if (proj.characters().contains(textBlock.character))
+                {
+                    const col = proj.characters().find(textBlock.character).color;
+                    const a = (col.a ?? 255) / 255;
+                    charPara.style.color = `rgba(${col.r}, ${col.g}, ${col.b}, ${a})`;
+                }
+                editorDiv.appendChild(charPara);
+            }
+            lastCharacter = textBlock.character;
+        }
+        else
+        {
+            wasLastBlockDialogue = false;
+        }
+
+        // Editing block
         if (i === editIndex)
         {
             const lineDiv = document.createElement('div');
@@ -32,14 +61,29 @@ function renderEditor()
             lineDiv.spellcheck = true;
             lineDiv.textContent = textBlock.content;
 
+            lineDiv.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter')
+                {
+                    event.preventDefault();
+                    lineDiv.blur();
+                }
+            });
+
             lineDiv.addEventListener('input', () => {
                 textBlock.content = lineDiv.textContent;
+            });
+            lineDiv.addEventListener('blur', () => {
+                if (editIndex === i)
+                {
+                    loadSequence(sceneIndex, -1);
+                }
             });
 
             editorDiv.appendChild(lineDiv);
             continue;
         }
 
+        // Regular Rendering
         const p = document.createElement('p');
         p.textContent = (textBlock.type === 'Parenthetical') ? '(' + textBlock.content + ')' : textBlock.content;
         
