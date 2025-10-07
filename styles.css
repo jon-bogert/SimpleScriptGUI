@@ -131,6 +131,16 @@ body {
     padding: 5px;
 }
 
+.line-settings-button-parent{
+    display: flex;
+}
+
+.line-settings-button {
+    color: #777;
+    padding: 5px;
+    cursor: pointer;
+}
+
 .line-selected {
     padding: 10px;
     background-color: #333;
@@ -190,4 +200,22 @@ option {
     background-color: #444;
     color: #d4d4d4;
     font-size: 20px;
+}
+
+.insertparent {
+    width: 700px;
+    height: 10px
+}
+
+.insertline {
+  display: block;
+  width: 700px;
+  height: 2px;
+  background-color: #666;
+  opacity: 0;
+  transition: opacity 0.1s ease;
+}
+
+.insertparent:hover .insertline {
+  opacity: 1;
 }

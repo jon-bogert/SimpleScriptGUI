@@ -22,6 +22,16 @@ function renderEditor()
     let lastCharacter = "";
     let wasLastBlockDialogue = false;
 
+    const insertParentTop = document.createElement('div');
+    insertParentTop.className = 'insertparent';
+    insertParentTop.addEventListener('click', () => {
+        addLine(0);
+    });
+    const insertLineTop = document.createElement('div');
+    insertLineTop.className = 'insertline';
+    insertParentTop.appendChild(insertLineTop);
+    editorDiv.appendChild(insertParentTop);
+
     // Text Block Loop
     for (let i = 0; i < seq.blocks.length; ++i)
     {
@@ -147,11 +157,60 @@ function renderEditor()
             });
 
             lineDiv.appendChild(lineContent);
+
+            // Move and Delete Buttons
+            const delButton = document.createElement('div');
+            delButton.className = 'line-settings-button';
+            delButton.textContent = 'x';
+            delButton.style.color = 'red';
+            delButton.addEventListener('click', () => {
+                removeBlockAt(i);
+            });
+            const upButton = document.createElement('div');
+            upButton.className = 'line-settings-button';
+            upButton.textContent = '^';
+            upButton.addEventListener('click', () => {
+                swapBlocks(i, i-1);
+            });
+            const downButton = document.createElement('div');
+            downButton.className = 'line-settings-button';
+            downButton.textContent = 'v';
+            downButton.addEventListener('click', () => {
+                swapBlocks(i, i+1);
+            });
+
+            const buttonParent = document.createElement('div');
+            buttonParent.className = 'line-settings-button-parent';
+            buttonParent.appendChild(delButton);
+            buttonParent.appendChild(upButton);
+            buttonParent.appendChild(downButton);
+            lineDiv.appendChild(buttonParent);
+            
             editorDiv.appendChild(lineDiv);
+            
+            // Insert Line
+            const insertParent = document.createElement('div');
+            insertParent.className = 'insertparent';
+            insertParent.addEventListener('click', () => {
+                addLine(i + 1);
+            });
+
+            const insertLine = document.createElement('div');
+            insertLine.className = 'insertline';
+            insertParent.appendChild(insertLine);
+            editorDiv.appendChild(insertParent);
+
             continue;
         }
 
         // Regular Rendering
+
+        if (textBlock.content === '')
+        {
+            removeBlockAt(i);
+            continue;
+        }
+
         const p = document.createElement('p');
         p.textContent = (textBlock.type === 'Parenthetical') ? '(' + textBlock.content + ')' : textBlock.content;
         
@@ -175,6 +234,17 @@ function renderEditor()
             setEditLine(i);
         });
         editorDiv.appendChild(p);
+
+        const insertParent = document.createElement('div');
+        insertParent.className = 'insertparent';
+        insertParent.addEventListener('click', () => {
+            addLine(i + 1);
+        });
+
+        const insertLine = document.createElement('div');
+        insertLine.className = 'insertline';
+        insertParent.appendChild(insertLine);
+        editorDiv.appendChild(insertParent);
     }
 }
 
@@ -216,6 +286,43 @@ function setEditLine(lineIndex)
     loadSequence(sceneIndex, lineIndex)
 }
 
+function removeBlockAt(index)
+{
+    if (proj === null || sceneIndex < 0)
+        return;
+
+    let seq = proj.getSequence(sceneIndex);
+    seq.blocks.splice(index, 1);
+    loadSequence(sceneIndex, editIndex);
+}
+
+function swapBlocks(indexA, indexB)
+{
+    if (proj === null || sceneIndex < 0)
+        return;
+    let seq = proj.getSequence(sceneIndex);
+
+    if (indexA >= seq.blocks.length || indexA < 0
+        || indexB >= seq.blocks.length || indexB < 0)
+    {
+        return;
+    }
+
+    [seq.blocks[indexA], seq.blocks[indexB]] = [seq.blocks[indexB], seq.blocks[indexA]];
+    loadSequence(sceneIndex, indexB);
+}
+
+function addLine(index)
+{
+    if (proj === null || sceneIndex < 0)
+        return;
+
+    let seq = proj.getSequence(sceneIndex);
+
+    seq.blocks.splice(index, 0, { type: 'Unassigned', character: '', content: '', slugCount: 1 });
+    loadSequence(sceneIndex, index);
+}
+
 function loadSequence(index, lineIndex)
 {
     sceneIndex = index;
@@ -230,6 +337,14 @@ async function displayProjects(path)
     
     await proj.load(path);
         
+    const background = document.getElementById('editor');
+    background.addEventListener('click', (event) => {
+        if (event.target === background)
+        {
+            loadSequence(sceneIndex, -1);
+        }
+    });
+
     renderSidebar();
     renderEditor();
 }
