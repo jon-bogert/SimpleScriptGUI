@@ -3,6 +3,7 @@ const { Project } = require('./project');
 let proj = null;
 let sceneIndex = -1;
 let editIndex = -1;
+let isEditingTitle = false;
 
 function renderEditor()
 {
@@ -344,12 +345,69 @@ function addLine(index)
     loadSequence(sceneIndex, index);
 }
 
-function loadSequence(index, lineIndex)
+function loadSequence(index, lineIndex, overrideTitleAbort = false)
 {
+    if (isEditingTitle && !overrideTitleAbort)
+    {
+        abortTitle();
+    }
     sceneIndex = index;
     editIndex = lineIndex;
     renderSidebar();
     renderEditor();
+}
+
+function editTitle()
+{
+    if (isEditingTitle || proj == null || sceneIndex < 0)
+        return;
+
+    const title = document.getElementById('page-title');
+    title.className = 'page-title-editing';
+    isEditingTitle = true;
+    title.contentEditable = true;
+    title.spellcheck = true;
+
+    loadSequence(sceneIndex, -1, true);
+}
+
+function saveTitle()
+{
+    if (!isEditingTitle || proj == null || sceneIndex < 0 )
+        return;
+
+    const title = document.getElementById('page-title');
+    const seq = proj.getSequence(sceneIndex);
+    seq.name = title.textContent;
+    isEditingTitle = false;
+    title.className = '';
+    title.contentEditable = false;
+    title.spellcheck = false;
+    renderSidebar();
+}
+
+function abortTitle()
+{
+    if (!isEditingTitle || proj == null || sceneIndex < 0 )
+        return;
+
+    const title = document.getElementById('page-title');
+    const seq = proj.getSequence(sceneIndex);
+    title.textContent = seq.name;
+    isEditingTitle = false;
+    title.className = '';
+    title.contentEditable = false;
+    title.spellcheck = false;
+}
+
+function addNewSequence()
+{
+    if (proj == null)
+        return;
+
+    proj.m_sequences.push({name: 'Untitled', blocks: []});
+    sceneIndex = proj.m_sequences.length - 1;
+    loadSequence(sceneIndex, -1);
 }
 
 async function displayProjects(path)
@@ -364,6 +422,25 @@ async function displayProjects(path)
         {
             loadSequence(sceneIndex, -1);
         }
+    });
+
+    const title = document.getElementById('page-title');
+    title.addEventListener('click', () => {
+        editTitle();
+    });
+    title.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            saveTitle();
+        }
+        else if (event.key === "Escape") {
+            abortTitle();
+        }
+    });
+
+    const newPageButton = document.getElementById('new-sequence-button');
+    newPageButton.addEventListener('click', () => {
+        addNewSequence();
     });
 
     renderSidebar();

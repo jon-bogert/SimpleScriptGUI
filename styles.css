@@ -23,6 +23,18 @@ body {
         sans-serif;
 }
 
+.page-title-editing {
+    outline: none;
+    cursor: text;
+    margin-bottom: 10px;
+    background-color: #444;
+    border: 2px solid #555;
+    border-radius: 8px;
+    padding: 10px;
+    min-width: 500px;
+
+}
+
 .main-content {
     padding: 20px;
     flex: 1;
