@@ -1,4 +1,5 @@
 const { Project } = require('./project');
+const { ipcRenderer } = require('electron');
 
 let proj = null;
 let sceneIndex = -1;
@@ -410,11 +411,14 @@ function addNewSequence()
     loadSequence(sceneIndex, -1);
 }
 
-async function displayProjects(path)
+async function displayProject(path)
 {
     proj = new Project();
     
-    await proj.load(path);
+    if (path !== '')
+    {
+        await proj.load(path);
+    }
         
     const background = document.getElementById('editor');
     background.addEventListener('click', (event) => {
@@ -448,5 +452,12 @@ async function displayProjects(path)
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-    displayProjects('D:\\repos\\documentation\\ProjectEden_Script');
+    displayProject('');
+});
+
+ipcRenderer.on('open-project', (event, projectPath) => {
+  console.log('Project path received in renderer:', projectPath);
+  
+  displayProject(projectPath);
+
 });
