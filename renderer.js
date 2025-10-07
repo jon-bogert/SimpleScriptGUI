@@ -212,8 +212,21 @@ function renderEditor()
         }
 
         const p = document.createElement('p');
-        p.textContent = (textBlock.type === 'Parenthetical') ? '(' + textBlock.content + ')' : textBlock.content;
+        // Text
+        if (textBlock.type === 'Parenthetical')
+        {
+            p.textContent = '(' + textBlock.content + ')';
+        }
+        else if (textBlock.type === 'Note')
+        {
+            p.textContent = '// ' + textBlock.content;
+        }
+        else
+        {
+            p.textContent = textBlock.content;
+        }
         
+        // Assign Styling
         if (textBlock.type === 'Slug')
         {
             p.className = "slug-line";
@@ -229,6 +242,14 @@ function renderEditor()
         else if (textBlock.type === 'Dialogue')
         {
             p.className = 'dialogue'
+        }
+        else if (textBlock.type === 'Note')
+        {
+            p.className = 'note';
+        }
+        else
+        {
+            p.style.color = 'red';
         }
         p.addEventListener('click', () => {
             setEditLine(i);

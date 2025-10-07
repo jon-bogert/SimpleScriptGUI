@@ -77,6 +77,22 @@ body {
     color: #fff;             /* optional: change text color on hover */
 }
 
+.new-sequence-button {
+    margin-top: auto;
+    display: flex;
+    justify-content: center;
+    background-color: #333;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    user-select: none;
+    cursor: pointer;
+}
+
+.new-sequence-button:hover {
+    background-color: #3e3e42;
+}
+
 .editor {
     overflow-y: auto;
     padding-left: calc(50% - 450px);
@@ -113,6 +129,14 @@ body {
     width: 450px;
 }
 
+.note {
+    cursor: pointer;
+    user-select: none;
+    padding: 10px;
+    width: 700px;
+    color: #888
+}
+
 .character-name {
     user-select: none;
     padding: 10px;
@@ -139,6 +163,7 @@ body {
     color: #777;
     padding: 5px;
     cursor: pointer;
+    user-select: none;
 }
 
 .line-selected {
