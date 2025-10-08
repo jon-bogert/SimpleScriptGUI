@@ -176,25 +176,46 @@ function renderEditor()
 
             lineDiv.appendChild(lineContent);
 
+            const buttonSize = 20;
+
+            const underline = document.createElement('div');
+            underline.className = 'line-selected-underline';
+            lineDiv.appendChild(underline);
+
             // Move and Delete Buttons
             const delButton = document.createElement('div');
             delButton.className = 'line-settings-button';
-            delButton.textContent = 'x';
-            delButton.style.color = 'red';
+            const delButtonImg = document.createElement('img');
+            delButtonImg.src = 'assets/delete-icon.png';
+            delButtonImg.alt = 'Delete Line';
+            delButtonImg.color = 'red';
+            delButtonImg.width = buttonSize;
+            delButtonImg.height = buttonSize;
+            delButton.appendChild(delButtonImg);
             delButton.addEventListener('click', () => {
                 removeBlockAt(i);
                 setHasChanges(true);
             });
             const upButton = document.createElement('div');
             upButton.className = 'line-settings-button';
-            upButton.textContent = '^';
+            const upButtonImg = document.createElement('img');
+            upButtonImg.src = 'assets/up-icon.png';
+            upButtonImg.alt = 'Move Line Up';
+            upButtonImg.width = buttonSize;
+            upButtonImg.height = buttonSize;
+            upButton.appendChild(upButtonImg);
             upButton.addEventListener('click', () => {
                 swapBlocks(i, i-1);
                 setHasChanges(true);
             });
             const downButton = document.createElement('div');
             downButton.className = 'line-settings-button';
-            downButton.textContent = 'v';
+            const downButtonImg = document.createElement('img');
+            downButtonImg.src = 'assets/down-icon.png';
+            downButtonImg.alt = 'Move Line Down';
+            downButtonImg.width = buttonSize;
+            downButtonImg.height = buttonSize;
+            downButton.appendChild(downButtonImg);
             downButton.addEventListener('click', () => {
                 swapBlocks(i, i+1);
                 setHasChanges(true);

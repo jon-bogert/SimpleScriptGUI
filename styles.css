@@ -169,13 +169,30 @@ body {
 
 .line-settings-button-parent{
     display: flex;
+    padding-top: 5px;
 }
 
 .line-settings-button {
     color: #777;
+    font-size: 0;
     padding: 5px;
+    margin-right: 5px;
     cursor: pointer;
     user-select: none;
+    border-radius: 8px;
+    transition: background-color 0.1s;
+}
+
+.line-settings-button:hover {
+    background-color: #444;
+}
+
+.line-selected-underline {
+    margin-top: 5px;
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: #666;
 }
 
 .line-selected {
