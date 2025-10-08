@@ -187,7 +187,7 @@ class Project {
 
         await this._saveCharacters(path.join(projPath, "_char.txt"));
 
-        let fileCounter = 0;
+        let fileCounter = { value: 0 };
 
         for (let i = 0; i < this.m_sequences.length; ++i) {
             const seq = this.m_sequences[i];
@@ -552,12 +552,12 @@ class Project {
     async _saveCharacters(charPath) {
         let content = "";
         for (const c of this.m_characters.data) {
-            content += `[${c.name}]{ ${c.color.r}, ${c.color.g}, ${c.color.b}, ${c.color.a} }\n`;
+            content += `[${c.name}]{ ${c.color.r}, ${c.color.g}, ${c.color.b}, ${c.color.a} }\r\n`;
 
             if (c.notes.length > 0) {
-                content += c.notes + "\n";
+                content += c.notes + "\r\n";
             }
-            content += "\n";
+            content += "\r\n";
         }
         await fs.writeFile(charPath, content);
     }
@@ -583,13 +583,15 @@ class Project {
                     currentContent = "";
                 }
 
-                const filename = this._threeDig(fileCounter++) + "_" + this._nameFromSlug(block.content) + ".txt";
+                lastCharName = '';
+
+                const filename = this._threeDig(fileCounter.value++) + "_" + this._nameFromSlug(block.content) + ".txt";
                 const filePath = path.join(sequencePath, filename);
 
                 currentFileHandle = await fs.open(filePath, 'w');
 
                 // Write Slug line
-                currentContent += `# ${block.content}\n\n`;
+                currentContent += `# ${block.content}\r\n\r\n`;
                 continue;
             }
 
@@ -600,24 +602,24 @@ class Project {
 
             switch (block.type) {
                 case TextBlockType.Action:
-                    currentContent += `* ${block.content}\n\n`;
+                    currentContent += `* ${block.content}\r\n\r\n`;
                     break;
                 case TextBlockType.Note:
-                    currentContent += `// ${block.content}\n\n`;
+                    currentContent += `// ${block.content}\r\n\r\n`;
                     break;
                 case TextBlockType.Parenthetical:
                     if (block.character !== lastCharName) {
-                        currentContent += `[${block.character}]\n`;
+                        currentContent += `[${block.character}]\r\n`;
                         lastCharName = block.character;
                     }
-                    currentContent += `(${block.content})\n\n`;
+                    currentContent += `(${block.content})\r\n\r\n`;
                     break;
                 case TextBlockType.Dialogue:
                     if (block.character !== lastCharName) {
-                        currentContent += `[${block.character}]\n`;
+                        currentContent += `[${block.character}]\r\n`;
                         lastCharName = block.character;
                     }
-                    currentContent += `${block.content}\n\n`;
+                    currentContent += `${block.content}\r\n\r\n`;
                     break;
                 default:
                     this.Print(`Save Sequence -- 'TextBlock' type '${block.type}' not implemented`);
