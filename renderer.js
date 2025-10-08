@@ -14,6 +14,8 @@ function setHasChanges(v)
     if (v !== hasChanges)
     {
         ipcRenderer.send('on-saved-change', v);
+        const title = document.getElementById('title');
+        title.textContent = (v === true) ? 'Simple Script - Unsaved' : 'Simple Script';
     }
     hasChanges = v;
 }
