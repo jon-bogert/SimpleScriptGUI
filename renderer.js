@@ -496,7 +496,8 @@ ipcRenderer.on('save-project', async (event, overridePath) => {
     }
 
     setHasChanges(false);
-    proj.save(projectPath);
+    await proj.save(projectPath);
+    ipcRenderer.send('save-complete');
 });
 
 ipcRenderer.on('new-folder-result', async (event, projPath) => {
@@ -506,5 +507,10 @@ ipcRenderer.on('new-folder-result', async (event, projPath) => {
 
     projectPath = projPath;
     setHasChanges(false);
-    proj.save(projectPath);
+    await proj.save(projectPath);
+    ipcRenderer.send('save-complete');
+});
+
+ipcRenderer.on('check-unsaved', (event) => {
+    event.sender.send('unsaved-status', hasChanges);
 });

@@ -92,6 +92,53 @@ function createWindow()
         }
         win.webContents.send('new-folder-result', projectPath);
     });
+
+    win.on('close', async (e) => {
+        e.preventDefault(); // prevent immediate close
+
+        // Ask renderer if there are unsaved changes
+        win.webContents.send('check-unsaved');
+
+        // Wait for renderer reply
+        const hasChanges = await new Promise((resolve) => {
+            ipcMain.once('unsaved-status', (_, value) => resolve(value));
+        });
+
+        if (hasChanges)
+        {
+            const result = dialog.showMessageBoxSync(win, {
+                type: 'warning',
+                buttons: ['Yes', 'No', 'Cancel'],
+                defaultId: 0,
+                cancelId: 2,
+                title: 'Unsaved Changes',
+                message: 'You have unsaved changes. Would you like to save them?'
+            });
+
+            if (result === 1)
+            {
+                // Allow close
+                win.destroy();
+            }
+            else if (result === 0)
+            {
+                // User chose "Yes" → tell renderer to save
+                win.webContents.send('save-project', false);
+
+                // Wait for confirmation that saving is done
+                await new Promise((resolve) => {
+                    ipcMain.once('save-complete', resolve);
+            });
+
+                win.destroy();
+            }
+        }
+        else
+        {
+            // No unsaved changes — close normally
+            win.destroy();
+        }
+    });
 }
 
 app.whenReady().then(async () =>
