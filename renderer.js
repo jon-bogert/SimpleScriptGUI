@@ -323,25 +323,74 @@ function renderSidebar()
     const seqCount = proj.getNumberOfSequences();
     for (let i = 0; i < seqCount; ++i)
     {
-        const p = document.createElement('p');
+        const outerEntry = document.createElement('div');
+        const labelText = document.createElement('p');
+        outerEntry.appendChild(labelText);
 
         if (sceneIndex === i)
         {
-            p.textContent = '> ' + proj.getSequence(i).name;
-            p.className = "sequence-entry-selected";
+            outerEntry.className = "sequence-entry-selected";
+
+            const buttonSize = 15;
+
+            // Move and Delete Buttons
+            const delButton = document.createElement('div');
+            delButton.className = 'line-settings-button';
+            const delButtonImg = document.createElement('img');
+            delButtonImg.src = 'assets/delete-icon.png';
+            delButtonImg.alt = 'Delete Sequence';
+            delButtonImg.color = 'red';
+            delButtonImg.width = buttonSize;
+            delButtonImg.height = buttonSize;
+            delButton.appendChild(delButtonImg);
+            delButton.addEventListener('click', () => {
+                removeSequenceAt(i);
+                setHasChanges(true);
+            });
+            const upButton = document.createElement('div');
+            upButton.className = 'line-settings-button';
+            const upButtonImg = document.createElement('img');
+            upButtonImg.src = 'assets/up-icon.png';
+            upButtonImg.alt = 'Move Sequence Up';
+            upButtonImg.width = buttonSize;
+            upButtonImg.height = buttonSize;
+            upButton.appendChild(upButtonImg);
+            upButton.addEventListener('click', () => {
+                swapSequences(i, i-1);
+                setHasChanges(true);
+            });
+            const downButton = document.createElement('div');
+            downButton.className = 'line-settings-button';
+            const downButtonImg = document.createElement('img');
+            downButtonImg.src = 'assets/down-icon.png';
+            downButtonImg.alt = 'Move Sequence Down';
+            downButtonImg.width = buttonSize;
+            downButtonImg.height = buttonSize;
+            downButton.appendChild(downButtonImg);
+            downButton.addEventListener('click', () => {
+                swapSequences(i, i+1);
+                setHasChanges(true);
+            });
+
+            const buttonParent = document.createElement('div');
+            buttonParent.className = 'line-settings-button-parent';
+            buttonParent.appendChild(delButton);
+            buttonParent.appendChild(upButton);
+            buttonParent.appendChild(downButton);
+            outerEntry.appendChild(buttonParent);
         }
         else
         {
-            p.textContent = proj.getSequence(i).name;
-            p.className = "sequence-entry";
-        }
+            outerEntry.className = "sequence-entry";
 
-
-        p.addEventListener('click', () => {
+            outerEntry.addEventListener('click', () => {
             loadSequence(i, -1);
         });
+        }
 
-        seqDiv.appendChild(p);
+        labelText.textContent = proj.getSequence(i).name;
+
+        seqDiv.appendChild(outerEntry);
     }
 }
 
@@ -455,6 +504,35 @@ function addNewSequence()
     sceneIndex = proj.m_sequences.length - 1;
     setHasChanges(true);
     loadSequence(sceneIndex, -1);
+}
+
+function removeSequenceAt(index)
+{
+    if (proj === null || sceneIndex < 0)
+        return;
+
+    if (index < 0 || index >= proj.m_sequences.length)
+        return;
+
+    proj.m_sequences.splice(index, 1);
+    setHasChanges(true);
+    loadSequence(-1, -1);
+}
+
+function swapSequences(indexA, indexB)
+{
+    if (proj === null || sceneIndex < 0)
+        return;
+
+    if (indexA >= proj.m_sequences.length || indexA < 0
+        || indexB >= proj.m_sequences.length || indexB < 0)
+    {
+        return;
+    }
+
+    [proj.m_sequences[indexA], proj.m_sequences[indexB]] = [proj.m_sequences[indexB], proj.m_sequences[indexA]];
+    setHasChanges(true);
+    loadSequence(indexB, editIndex);
 }
 
 async function displayProject(path)
