@@ -501,10 +501,10 @@ ipcRenderer.on('save-project', async (event, overridePath) => {
 
 ipcRenderer.on('new-folder-result', async (event, projPath) => {
     
-    if (result.canceled || result.filePaths.length <= 0)
+    if (projPath === '')
             return;
 
-    projectPath = result.filePaths[0];
+    projectPath = projPath;
     setHasChanges(false);
     proj.save(projectPath);
 });

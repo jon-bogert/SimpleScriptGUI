@@ -44,7 +44,7 @@ function createWindow()
                 },
                 {
                     label: 'Save Project As',
-                    //accelerator: 'CmdOrCtrl+Shift+S',
+                    accelerator: 'CmdOrCtrl+Shift+S',
                     click: async () => {
                         win.webContents.send('save-project', true);
                     }
@@ -80,12 +80,12 @@ function createWindow()
 
     win.loadFile('index.html');
 
-    win.webContents.on('get-new-folder', async (event) => {
+    ipcMain.on('get-new-folder', async (event) => {
         const result = await dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), {
             properties: ['openDirectory']
         });
 
-        const projectPath = '';
+        let projectPath = '';
         if (!result.canceled && result.filePaths.length > 0)
         {
             projectPath = result.filePaths[0];
