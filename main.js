@@ -35,6 +35,20 @@ function createWindow()
                         }
                     }
                 },
+                {
+                    label: 'Save Project',
+                    accelerator: 'CmdOrCtrl+S',
+                    click: async () => {
+                        win.webContents.send('save-project', false);
+                    }
+                },
+                {
+                    label: 'Save Project As',
+                    //accelerator: 'CmdOrCtrl+Shift+S',
+                    click: async () => {
+                        win.webContents.send('save-project', true);
+                    }
+                },
                 { type: 'separator' },
                 {
                     label: 'Exit',
@@ -65,6 +79,19 @@ function createWindow()
     win.webContents.session.setSpellCheckerEnabled(true);
 
     win.loadFile('index.html');
+
+    win.webContents.on('get-new-folder', async (event) => {
+        const result = await dialog.showOpenDialog(BrowserWindow.getFocusedWindow(), {
+            properties: ['openDirectory']
+        });
+
+        const projectPath = '';
+        if (!result.canceled && result.filePaths.length > 0)
+        {
+            projectPath = result.filePaths[0];
+        }
+        win.webContents.send('new-folder-result', projectPath);
+    });
 }
 
 app.whenReady().then(async () =>

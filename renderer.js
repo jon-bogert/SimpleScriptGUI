@@ -6,6 +6,18 @@ let sceneIndex = -1;
 let editIndex = -1;
 let isEditingTitle = false;
 
+let projectPath = '';
+let hasChanges = false;
+
+function setHasChanges(v)
+{
+    if (v !== hasChanges)
+    {
+        ipcRenderer.send('on-saved-change', v);
+    }
+    hasChanges = v;
+}
+
 function renderEditor()
 {
     const editorDiv = document.getElementById('editor');
@@ -119,6 +131,7 @@ function renderEditor()
 
                 charField.addEventListener('input', () => {
                     textBlock.character = charField.textContent.toUpperCase();
+                    setHasChanges(true);
                 });
 
                 charField.addEventListener('keydown', (event) => {
@@ -156,6 +169,7 @@ function renderEditor()
 
             lineContent.addEventListener('input', () => {
                 textBlock.content = lineContent.textContent;
+                setHasChanges(true);
             });
 
             lineDiv.appendChild(lineContent);
@@ -167,18 +181,21 @@ function renderEditor()
             delButton.style.color = 'red';
             delButton.addEventListener('click', () => {
                 removeBlockAt(i);
+                setHasChanges(true);
             });
             const upButton = document.createElement('div');
             upButton.className = 'line-settings-button';
             upButton.textContent = '^';
             upButton.addEventListener('click', () => {
                 swapBlocks(i, i-1);
+                setHasChanges(true);
             });
             const downButton = document.createElement('div');
             downButton.className = 'line-settings-button';
             downButton.textContent = 'v';
             downButton.addEventListener('click', () => {
                 swapBlocks(i, i+1);
+                setHasChanges(true);
             });
 
             const buttonParent = document.createElement('div');
@@ -195,6 +212,7 @@ function renderEditor()
             insertParent.className = 'insertparent';
             insertParent.addEventListener('click', () => {
                 addLine(i + 1);
+                setHasChanges(true);
             });
 
             const insertLine = document.createElement('div');
@@ -316,6 +334,7 @@ function removeBlockAt(index)
 
     let seq = proj.getSequence(sceneIndex);
     seq.blocks.splice(index, 1);
+    setHasChanges(true);
     loadSequence(sceneIndex, editIndex);
 }
 
@@ -332,6 +351,7 @@ function swapBlocks(indexA, indexB)
     }
 
     [seq.blocks[indexA], seq.blocks[indexB]] = [seq.blocks[indexB], seq.blocks[indexA]];
+    setHasChanges(true);
     loadSequence(sceneIndex, indexB);
 }
 
@@ -343,6 +363,7 @@ function addLine(index)
     let seq = proj.getSequence(sceneIndex);
 
     seq.blocks.splice(index, 0, { type: 'Unassigned', character: '', content: '', slugCount: 1 });
+    setHasChanges(true);
     loadSequence(sceneIndex, index);
 }
 
@@ -384,6 +405,7 @@ function saveTitle()
     title.className = '';
     title.contentEditable = false;
     title.spellcheck = false;
+    setHasChanges(true);
     renderSidebar();
 }
 
@@ -408,17 +430,21 @@ function addNewSequence()
 
     proj.m_sequences.push({name: 'Untitled', blocks: []});
     sceneIndex = proj.m_sequences.length - 1;
+    setHasChanges(true);
     loadSequence(sceneIndex, -1);
 }
 
 async function displayProject(path)
 {
     proj = new Project();
-    
+    setHasChanges(false);
+
     if (path !== '')
     {
         await proj.load(path);
     }
+
+    projectPath = path;
         
     const background = document.getElementById('editor');
     background.addEventListener('click', (event) => {
@@ -455,9 +481,30 @@ window.addEventListener('DOMContentLoaded', () => {
     displayProject('');
 });
 
-ipcRenderer.on('open-project', (event, projectPath) => {
-  console.log('Project path received in renderer:', projectPath);
-  
-  displayProject(projectPath);
+ipcRenderer.on('open-project', (event, projPath) => {
+    displayProject(projPath);
+});
 
+ipcRenderer.on('save-project', async (event, overridePath) => {
+    if (proj === null)
+        return;
+    
+    if (projectPath === '' || overridePath)
+    {
+        ipcRenderer.send('get-new-folder');
+        return;
+    }
+
+    setHasChanges(false);
+    proj.save(projectPath);
+});
+
+ipcRenderer.on('new-folder-result', async (event, projPath) => {
+    
+    if (result.canceled || result.filePaths.length <= 0)
+            return;
+
+    projectPath = result.filePaths[0];
+    setHasChanges(false);
+    proj.save(projectPath);
 });
