@@ -159,6 +159,7 @@ function renderEditor()
                 if (textBlock.character === '')
                 {
                     charPara.textContent = '<UNASSIGNED>';
+                    charPara.style.color = 'red';
                 }
                 else
                 {
@@ -677,12 +678,12 @@ async function displayProject(path)
     renderEditor();
 }
 
-window.addEventListener('DOMContentLoaded', () => {
-    displayProject('');
+window.addEventListener('DOMContentLoaded', async () => {
+    await displayProject('');
 });
 
-ipcRenderer.on('open-project', (event, projPath) => {
-    displayProject(projPath);
+ipcRenderer.on('open-project', async (event, projPath) => {
+    await displayProject(projPath);
 });
 
 ipcRenderer.on('save-project', async (event, overridePath) => {
