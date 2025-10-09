@@ -7,9 +7,56 @@
   "type": "commonjs",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron .",
+    "dist:win": "electron-builder --win",
+    "dist:linux": "electron-builder --linux",
+    "dist:mac": "electron-builder --mac --universal"
+  },
+    "build": {
+    "appId": "com.eXomorph.SimpleScript",
+    "productName": "SimpleScript",
+    "directories": {
+      "output": "dist"
+    },
+    "files": [
+      "**/*",
+      "!node_modules/.bin",
+      "!dist"
+    ],
+    "asar": true,
+
+    "mac": {
+      "target": [
+        "dmg",
+        "zip"
+      ],
+      "category": "public.app-category.productivity",
+      "icon": "build/simplescript_favicon.icns",
+      "artifactName": "${productName}-${version}-${arch}.${ext}"
+    },
+    "dmg": {
+      "background": "build/dmg-background.png",
+      "icon": "build/simplescript_favicon.icns"
+    },
+    "win": {
+      "target": [
+        "portable"
+      ],
+      "icon": "build/icons/512x512.png",
+      "artifactName": "${productName}-${version}-win-${arch}.${ext}"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ],
+      "icon": "build/icons/",
+      "category": "Utility",
+      "artifactName": "${productName}-${version}-linux-${arch}.${ext}"
+    }
   },
   "devDependencies": {
-    "electron": "^38.2.1"
+    "electron": "^38.2.1",
+    "electron-builder": "^26.0.12"
   }
 }
