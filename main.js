@@ -70,6 +70,36 @@ function createWindow()
                 { role: 'paste' },
                 { role: 'selectall' }
             ]
+        },
+        {
+            label: 'View',
+            submenu: [
+                {
+                    label: 'Zoom In',
+                    accelerator: 'CmdOrCtrl+=',
+                    click: () => {
+                        const currentZoom = win.webContents.getZoomLevel();
+                        win.webContents.setZoomLevel(currentZoom + 1);
+                    }
+                },
+                {
+                    label: 'Zoom Out',
+                    accelerator: 'CmdOrCtrl+-',
+                    click: () => {
+                        const currentZoom = win.webContents.getZoomLevel();
+                        win.webContents.setZoomLevel(currentZoom - 1);
+                    }
+                },
+                {
+                    label: 'Reset Zoom',
+                    accelerator: 'CmdOrCtrl+0',
+                    click: () => {
+                        win.webContents.setZoomLevel(0);
+                    }
+                },
+                //{ role: 'reload' },
+                //{ role: 'toggledevtools' }
+            ]
         }
     ];
 
