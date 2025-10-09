@@ -68,7 +68,7 @@ function createWindow()
                 { role: 'cut' },
                 { role: 'copy' },
                 { role: 'paste' },
-                { role: 'selectall' }
+                { role: 'selectall' },
             ]
         },
         {
@@ -97,6 +97,8 @@ function createWindow()
                         win.webContents.setZoomLevel(0);
                     }
                 },
+                { type: 'separator'},
+                { role: 'toggledevtools'}
             ]
         }
     ];
