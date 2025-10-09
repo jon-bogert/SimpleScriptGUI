@@ -31,17 +31,32 @@ function initializeSidebarControls()
     const sidebar = document.getElementById('sidebar');
     const mainContent = document.getElementById('main-content');
     const resizeHande = document.getElementById('resize-handle');
+    const collapseButton = document.getElementById('collapse-sidebar');
 
     let isResizing = false;
     let startX = 0;
     let startWidth = 0;
 
+    collapseButton.addEventListener('click', () => {
+        collapseSidebar();
+    });
+
     resizeHande.addEventListener('mousedown', (event) => {
+        if (isSidebarCollapsed)
+            return;
+
         isResizing = true;
         startX = event.clientX;
         startWidth = sidebar.offsetWidth;
         //document.body.style.cursor = 'ew-resize';
         document.body.style.userSelect = 'none';
+    });
+
+    resizeHande.addEventListener('click', (event) => {
+        if (!isSidebarCollapsed)
+            return;
+        
+        expandSidebar();
     });
 
     document.addEventListener('mousemove', (event) => {
@@ -62,7 +77,7 @@ function initializeSidebarControls()
     });
 
     window.addEventListener('resize', () => {
-        if (this.sidebarCollapsed)
+        if (isSidebarCollapsed)
         {
             sidebar.style.display = 'none';
         }
@@ -75,6 +90,34 @@ function setSidebarWidth(width)
 
     sidebarWidth = width;
     sidebar.style.width = `${width}px`;
+}
+
+function collapseSidebar()
+{
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
+    const resizeHandle = document.getElementById('resize-handle');
+
+    isSidebarCollapsed = true;
+    sidebar.style.display = 'none';
+    resizeHandle.style.width = '5px';
+    resizeHandle.style.cursor = 'pointer';
+    //mainContent.style.marginLeft = '0';
+    //resizeHandle.style.marginLeft = '0';
+}
+
+function expandSidebar()
+{
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
+    const resizeHandle = document.getElementById('resize-handle');
+
+    isSidebarCollapsed = false;
+    sidebar.style.display = 'flex';
+    resizeHandle.style.width = '3px';
+    resizeHandle.style.cursor = 'ew-resize';
+    setSidebarWidth(sidebarWidth);
+    //mainContent.style.marginLeft = '';
 }
 
 function renderEditor()

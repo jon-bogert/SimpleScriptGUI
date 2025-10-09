@@ -28,6 +28,9 @@ body {
 
 .section-heading {
     font-family: var(--non-monospace-font);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .page-title-editing {
@@ -61,6 +64,28 @@ body {
     flex-direction: column;
     height: 100vh;
     font-family: var(--non-monospace-font);
+}
+
+.collapse-sidebar {
+    background-color: #333;
+    padding: 5px;
+    display: inline-block;
+    font-size: 0;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    user-select: none;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.collapse-sidebar:hover {
+    background-color: #3e3e42;
+}
+
+.collapse-sidebar img {
+    width: 20px;
+    height: 20px;
+    display: block;
 }
 
 .scene-title {
