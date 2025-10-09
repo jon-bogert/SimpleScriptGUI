@@ -97,8 +97,6 @@ function createWindow()
                         win.webContents.setZoomLevel(0);
                     }
                 },
-                //{ role: 'reload' },
-                //{ role: 'toggledevtools' }
             ]
         }
     ];
