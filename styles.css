@@ -9,6 +9,8 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    scrollbar-width: auto;
+    scrollbar-color: #444 #1e1e1e;
 }
 
 body {
@@ -66,6 +68,10 @@ body {
 
 .sequence-list {
     padding: 0px;
+    overflow-y: auto;
+    overflow-x: none;
+    scrollbar-color: #444 #252526;
+    margin-bottom: 10px;
 }
 
 .sequence-entry {
