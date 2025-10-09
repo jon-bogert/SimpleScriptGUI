@@ -9,6 +9,9 @@ let isEditingTitle = false;
 let projectPath = '';
 let hasChanges = false;
 
+let sidebarWidth = 0;
+let isSidebarCollapsed = false;
+
 function setHasChanges(v)
 {
     if (v !== hasChanges)
@@ -18,6 +21,60 @@ function setHasChanges(v)
         title.textContent = (v === true) ? 'Simple Script - Unsaved' : 'Simple Script';
     }
     hasChanges = v;
+}
+
+function initializeSidebarControls()
+{
+    isSidebarCollapsed = false;
+    sidebarWidth = 300;
+
+    const sidebar = document.getElementById('sidebar');
+    const mainContent = document.getElementById('main-content');
+    const resizeHande = document.getElementById('resize-handle');
+
+    let isResizing = false;
+    let startX = 0;
+    let startWidth = 0;
+
+    resizeHande.addEventListener('mousedown', (event) => {
+        isResizing = true;
+        startX = event.clientX;
+        startWidth = sidebar.offsetWidth;
+        //document.body.style.cursor = 'ew-resize';
+        document.body.style.userSelect = 'none';
+    });
+
+    document.addEventListener('mousemove', (event) => {
+        if (!isResizing)
+            return;
+
+        const newWidth = Math.max(200, Math.min(600, startWidth + (event.clientX - startX)));
+        setSidebarWidth(newWidth);
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isResizing)
+        {
+            isResizing = false;
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (this.sidebarCollapsed)
+        {
+            sidebar.style.display = 'none';
+        }
+    });
+}
+
+function setSidebarWidth(width)
+{
+    const sidebar = document.getElementById('sidebar');
+
+    sidebarWidth = width;
+    sidebar.style.width = `${width}px`;
 }
 
 function renderEditor()
@@ -573,6 +630,8 @@ async function displayProject(path)
     newPageButton.addEventListener('click', () => {
         addNewSequence();
     });
+
+    initializeSidebarControls();
 
     renderSidebar();
     renderEditor();

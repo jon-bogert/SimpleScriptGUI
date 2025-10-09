@@ -54,8 +54,10 @@ body {
     padding: 20px;
     width: 300px;
     background-color: #252526;
-    border-right: 1px solid #3e3e42;
+    /* border-right: 1px solid #3e3e42; */
     display: flex;
+    overflow-y: auto;
+    overflow-x: none;
     flex-direction: column;
     height: 100vh;
     font-family: var(--non-monospace-font);
@@ -68,8 +70,6 @@ body {
 
 .sequence-list {
     padding: 0px;
-    overflow-y: auto;
-    overflow-x: none;
     scrollbar-color: #444 #252526;
     margin-bottom: 10px;
 }
@@ -80,6 +80,8 @@ body {
     padding: 8px 12px;
     border-radius: 8px;
     transition: background-color 0.2s;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .sequence-entry:hover {
@@ -96,6 +98,8 @@ body {
     border: 2px solid #555;
     transition: background-color 0.2s;
     font-weight: bold;
+    overflow-x: hidden;
+    overflow-y: auto;
 }
 
 .sequence-entry-selected:hover {
@@ -116,6 +120,18 @@ body {
 }
 
 .new-sequence-button:hover {
+    background-color: #3e3e42;
+}
+
+.resize-handle {
+    cursor: ew-resize;
+    height: 100%;
+    width: 3px;
+    transition: background-color 0.2s;
+    background-color: #333;
+}
+
+.resize-handle:hover {
     background-color: #3e3e42;
 }
 
