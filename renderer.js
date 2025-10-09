@@ -102,8 +102,6 @@ function collapseSidebar()
     sidebar.style.display = 'none';
     resizeHandle.style.width = '5px';
     resizeHandle.style.cursor = 'pointer';
-    //mainContent.style.marginLeft = '0';
-    //resizeHandle.style.marginLeft = '0';
 }
 
 function expandSidebar()
@@ -117,7 +115,6 @@ function expandSidebar()
     resizeHandle.style.width = '3px';
     resizeHandle.style.cursor = 'ew-resize';
     setSidebarWidth(sidebarWidth);
-    //mainContent.style.marginLeft = '';
 }
 
 function renderEditor()
