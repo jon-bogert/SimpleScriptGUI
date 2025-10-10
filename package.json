@@ -31,12 +31,11 @@
         "zip"
       ],
       "category": "public.app-category.productivity",
-      "icon": "build/simplescript_favicon.icns",
+      "icon": "build/icon.icns",
       "artifactName": "${productName}-${version}-${arch}.${ext}"
     },
     "dmg": {
-      "background": "build/dmg-background.png",
-      "icon": "build/simplescript_favicon.icns"
+      "icon": "build/icon.icns"
     },
     "win": {
       "target": [
@@ -48,7 +47,8 @@
     "linux": {
       "target": [
         "AppImage",
-        "deb"
+        "deb",
+        "pacman"
       ],
       "icon": "build/icons/",
       "category": "Utility",

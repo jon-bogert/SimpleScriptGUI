@@ -13,7 +13,6 @@ yarn-error.log*
 /dist/
 /out/
 /release/
-/build/
 
 # OS-specific files
 .DS_Store
