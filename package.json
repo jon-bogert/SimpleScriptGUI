@@ -41,7 +41,7 @@
       "target": [
         "portable"
       ],
-      "icon": "build/icons/512x512.png",
+      "icon": "build/icon.ico",
       "artifactName": "${productName}-${version}-win-${arch}.${ext}"
     },
     "linux": {
