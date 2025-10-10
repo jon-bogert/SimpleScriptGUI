@@ -3,6 +3,8 @@
 ### Description
 *SimpleScriptGUI* is a cross-platform app for writing and editing film scripts. This new version uses the [Electron](https://www.electronjs.org) framework for a more natural workflow over the previous versions of this project ([SimpleScript](https://github.com/jon-bogert/SimpleScript) & [SimpleScriptCMD](https://github.com/jon-bogert/SimpleScriptCMD)).
 
+It is recommended that you download and install the *Courier Prime* font onto your system. You can download it from [Google Fonts](https://fonts.google.com/specimen/Courier+Prime).
+
 ### Features
 The following features are provided with this application
 - Add, Remove or Change the order of *Sequences*
