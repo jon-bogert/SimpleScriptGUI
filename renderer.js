@@ -1,16 +1,38 @@
-const { Project } = require('./project');
+const { Project, CharacterCollection } = require('./project');
 const { ipcRenderer } = require('electron');
 
 let proj = null;
 let sceneIndex = -1;
 let editIndex = -1;
+let charIndex = -1;
 let isEditingTitle = false;
 
 let projectPath = '';
 let hasChanges = false;
 
-let sidebarWidth = 0;
-let isSidebarCollapsed = false;
+let sidebarWidthLeft = 0;
+let isSidebarCollapsedLeft = false;
+
+function rgbaToHex(r, g, b, a = 1)
+{
+    const toHex = (n) => Math.round(n).toString(16).padStart(2, '0');
+    return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+
+function hexToRgba(hex)
+{
+    hex = hex.replace(/^#/, '');
+    if (hex.length === 3 || hex.length === 4)
+    {
+        hex = hex.split('').map(c => c + c).join('');
+    }
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    const a = 255;
+
+    return { r, g, b, a };
+}
 
 function setHasChanges(v)
 {
@@ -23,40 +45,38 @@ function setHasChanges(v)
     hasChanges = v;
 }
 
-function initializeSidebarControls()
+function initializeSidebarControlsLeft()
 {
-    isSidebarCollapsed = false;
-    sidebarWidth = 300;
+    isSidebarCollapsedLeft = false;
+    sidebarWidthLeft = 300;
 
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('main-content');
-    const resizeHande = document.getElementById('resize-handle');
-    const collapseButton = document.getElementById('collapse-sidebar');
+    const sidebar = document.getElementById('sidebar-left');
+    const resizeHande = document.getElementById('resize-handle-left');
+    const collapseButton = document.getElementById('collapse-sidebar-left');
 
     let isResizing = false;
     let startX = 0;
     let startWidth = 0;
 
     collapseButton.addEventListener('click', () => {
-        collapseSidebar();
+        collapseSidebarLeft();
     });
 
     resizeHande.addEventListener('mousedown', (event) => {
-        if (isSidebarCollapsed)
+        if (isSidebarCollapsedLeft)
             return;
 
         isResizing = true;
         startX = event.clientX;
         startWidth = sidebar.offsetWidth;
-        //document.body.style.cursor = 'ew-resize';
         document.body.style.userSelect = 'none';
     });
 
     resizeHande.addEventListener('click', (event) => {
-        if (!isSidebarCollapsed)
+        if (!isSidebarCollapsedLeft)
             return;
         
-        expandSidebar();
+        expandSidebarLeft();
     });
 
     document.addEventListener('mousemove', (event) => {
@@ -64,7 +84,7 @@ function initializeSidebarControls()
             return;
 
         const newWidth = Math.max(200, Math.min(600, startWidth + (event.clientX - startX)));
-        setSidebarWidth(newWidth);
+        setSidebarWidthLeft(newWidth);
     });
 
     document.addEventListener('mouseup', () => {
@@ -77,44 +97,132 @@ function initializeSidebarControls()
     });
 
     window.addEventListener('resize', () => {
-        if (isSidebarCollapsed)
+        if (isSidebarCollapsedLeft)
         {
             sidebar.style.display = 'none';
         }
     });
 }
 
-function setSidebarWidth(width)
+function setSidebarWidthLeft(width)
 {
-    const sidebar = document.getElementById('sidebar');
+    const sidebar = document.getElementById('sidebar-left');
 
-    sidebarWidth = width;
+    sidebarWidthLeft = width;
     sidebar.style.width = `${width}px`;
 }
 
-function collapseSidebar()
+function collapseSidebarLeft()
 {
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('main-content');
-    const resizeHandle = document.getElementById('resize-handle');
+    const sidebar = document.getElementById('sidebar-left');
+    const resizeHandle = document.getElementById('resize-handle-left');
 
-    isSidebarCollapsed = true;
+    isSidebarCollapsedLeft = true;
     sidebar.style.display = 'none';
     resizeHandle.style.width = '5px';
     resizeHandle.style.cursor = 'pointer';
 }
 
-function expandSidebar()
+function expandSidebarLeft()
 {
-    const sidebar = document.getElementById('sidebar');
-    const mainContent = document.getElementById('main-content');
-    const resizeHandle = document.getElementById('resize-handle');
+    const sidebar = document.getElementById('sidebar-left');
+    const resizeHandle = document.getElementById('resize-handle-left');
 
-    isSidebarCollapsed = false;
+    isSidebarCollapsedLeft = false;
     sidebar.style.display = 'flex';
     resizeHandle.style.width = '3px';
     resizeHandle.style.cursor = 'ew-resize';
-    setSidebarWidth(sidebarWidth);
+    setSidebarWidthLeft(sidebarWidthLeft);
+}
+
+function initializeSidebarControlsRight()
+{
+    isSidebarCollapsedRight = false;
+    sidebarWidthRight = 300;
+
+    const sidebar = document.getElementById('sidebar-right');
+    const resizeHande = document.getElementById('resize-handle-right');
+    const collapseButton = document.getElementById('collapse-sidebar-right');
+
+    let isResizing = false;
+    let startX = 0;
+    let startWidth = 0;
+
+    collapseButton.addEventListener('click', () => {
+        collapseSidebarRight();
+    });
+
+    resizeHande.addEventListener('mousedown', (event) => {
+        if (isSidebarCollapsedRight)
+            return;
+
+        isResizing = true;
+        startX = event.clientX;
+        startWidth = sidebar.offsetWidth;
+        document.body.style.userSelect = 'none';
+    });
+
+    resizeHande.addEventListener('click', (event) => {
+        if (!isSidebarCollapsedRight)
+            return;
+        
+        expandSidebarRight();
+    });
+
+    document.addEventListener('mousemove', (event) => {
+        if (!isResizing)
+            return;
+
+        const newWidth = Math.max(200, Math.min(600, startWidth - (event.clientX - startX)));
+        setSidebarWidthRight(newWidth);
+    });
+
+    document.addEventListener('mouseup', () => {
+        if (isResizing)
+        {
+            isResizing = false;
+            document.body.style.cursor = '';
+            document.body.style.userSelect = '';
+        }
+    });
+
+    window.addEventListener('resize', () => {
+        if (isSidebarCollapsedRight)
+        {
+            sidebar.style.display = 'none';
+        }
+    });
+}
+
+function setSidebarWidthRight(width)
+{
+    const sidebar = document.getElementById('sidebar-right');
+
+    sidebarWidthRight = width;
+    sidebar.style.width = `${width}px`;
+}
+
+function collapseSidebarRight()
+{
+    const sidebar = document.getElementById('sidebar-right');
+    const resizeHandle = document.getElementById('resize-handle-right');
+
+    isSidebarCollapsedRight = true;
+    sidebar.style.display = 'none';
+    resizeHandle.style.width = '5px';
+    resizeHandle.style.cursor = 'pointer';
+}
+
+function expandSidebarRight()
+{
+    const sidebar = document.getElementById('sidebar-right');
+    const resizeHandle = document.getElementById('resize-handle-right');
+
+    isSidebarCollapsedRight = false;
+    sidebar.style.display = 'flex';
+    resizeHandle.style.width = '3px';
+    resizeHandle.style.cursor = 'ew-resize';
+    setSidebarWidthRight(sidebarWidthRight);
 }
 
 function renderEditor()
@@ -163,6 +271,10 @@ function renderEditor()
                 }
                 else
                 {
+                    if (textBlock.character === "JESSA")
+                    {
+                        console.log('bang');
+                    }
                     charPara.textContent = (textBlock.character === lastCharacter) ? textBlock.character + ' (CONT\'D)' : textBlock.character;
                 }
                 charPara.className = 'character-name';
@@ -410,7 +522,7 @@ function renderEditor()
     }
 }
 
-function renderSidebar()
+function renderSequenceSidebar()
 {
     const seqDiv = document.getElementById('sequence-list');
     seqDiv.innerHTML = '';
@@ -492,6 +604,182 @@ function renderSidebar()
     }
 }
 
+function renderCharacterSidebar()
+{
+    const listDiv = document.getElementById('character-list');
+    listDiv.innerHTML = '';
+
+    const charSidebar = document.getElementById('sidebar-right');
+    charSidebar.addEventListener('click', (event) => {
+        if (event.target === charSidebar)
+        {
+            charIndex = -1;
+            loadSequence(sceneIndex, editIndex);
+        }
+    })
+
+    if (proj === null)
+        return;
+
+    const characters = proj.characters().data;
+
+    if (characters === null)
+        return;
+
+    for (let i = 0; i < characters.length; ++i)
+    {
+        const charDiv = document.createElement('div');
+        // Edit Character
+        if (i === charIndex)
+        {
+            charDiv.className = 'char-entry-selected';
+
+            // Character Name
+            const charFieldLabel = document.createElement('p');
+            charFieldLabel.className = 'line-settings-label';
+            charFieldLabel.textContent = "Name:";
+            charDiv.appendChild(charFieldLabel);
+
+            const nameField = document.createElement('div');
+            nameField.className = 'character-field';
+            nameField.contentEditable = true;
+            nameField.textContent = characters[i].name;
+
+            nameField.addEventListener('input', () => {
+                characters[i].name = nameField.textContent.toUpperCase();
+                setHasChanges(true);
+            });
+
+            nameField.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter')
+                {
+                    event.preventDefault();
+                }
+            });
+
+            charDiv.appendChild(nameField);
+            charDiv.appendChild(document.createElement('br'));
+            
+            // Color Picker
+            
+            const colorLabel = document.createElement('p');
+            colorLabel.className = 'line-settings-label';
+            colorLabel.textContent = 'Color:';
+            
+            const colorPicker = document.createElement('input');
+            colorPicker.type = 'color';
+            const col = characters[i].color;
+            colorPicker.value = rgbaToHex(col.r, col.g, col.b);
+            colorPicker.addEventListener('input', (event) => {
+                characters[i].color = hexToRgba(event.target.value);
+                setHasChanges(true);
+            });
+            
+            const colorRow = document.createElement('p');
+            colorRow.style.display = 'flex';
+            
+            colorRow.appendChild(colorLabel);
+            colorRow.appendChild(colorPicker);
+            charDiv.appendChild(colorRow);
+            charDiv.appendChild(document.createElement('br'));
+            
+            // Description
+
+            const descLabel = document.createElement('p');
+            descLabel.className = 'line-settings-label';
+            descLabel.textContent = 'Description:';
+            charDiv.appendChild(descLabel);
+
+            const descField = document.createElement('div');
+            descField.className = 'line-selected-content';
+            descField.contentEditable = true;
+            descField.spellcheck = true;
+            descField.textContent = characters[i].notes;
+            descField.addEventListener('input', () => {
+                characters[i].notes = descField.textContent;
+                setHasChanges(true);
+            });
+
+            descField.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter')
+                {
+                    event.preventDefault();
+                    charIndex = -1;
+                    loadSequence(sceneIndex, editIndex);
+                }
+            });
+
+            charDiv.appendChild(descField);
+
+            const underline = document.createElement('div');
+            underline.className = 'line-selected-underline';
+            charDiv.appendChild(underline);
+
+            
+            // Move and Delete Buttons
+            const buttonSize = 15;
+            const delButton = document.createElement('div');
+            delButton.className = 'line-settings-button';
+            const delButtonImg = document.createElement('img');
+            delButtonImg.src = 'assets/delete-icon.png';
+            delButtonImg.alt = 'Delete Sequence';
+            delButtonImg.color = 'red';
+            delButtonImg.width = buttonSize;
+            delButtonImg.height = buttonSize;
+            delButton.appendChild(delButtonImg);
+            delButton.addEventListener('click', () => {
+                removeCharacterAt(i);
+                setHasChanges(true);
+            });
+            const upButton = document.createElement('div');
+            upButton.className = 'line-settings-button';
+            const upButtonImg = document.createElement('img');
+            upButtonImg.src = 'assets/up-icon.png';
+            upButtonImg.alt = 'Move Sequence Up';
+            upButtonImg.width = buttonSize;
+            upButtonImg.height = buttonSize;
+            upButton.appendChild(upButtonImg);
+            upButton.addEventListener('click', () => {
+                swapCharacters(i, i-1);
+                setHasChanges(true);
+            });
+            const downButton = document.createElement('div');
+            downButton.className = 'line-settings-button';
+            const downButtonImg = document.createElement('img');
+            downButtonImg.src = 'assets/down-icon.png';
+            downButtonImg.alt = 'Move Sequence Down';
+            downButtonImg.width = buttonSize;
+            downButtonImg.height = buttonSize;
+            downButton.appendChild(downButtonImg);
+            downButton.addEventListener('click', () => {
+                swapCharacters(i, i+1);
+                setHasChanges(true);
+            });
+
+            const buttonParent = document.createElement('div');
+            buttonParent.className = 'line-settings-button-parent';
+            buttonParent.appendChild(delButton);
+            buttonParent.appendChild(upButton);
+            buttonParent.appendChild(downButton);
+            charDiv.appendChild(buttonParent);
+        }
+        else
+        {
+            charDiv.className = 'char-entry';
+            charDiv.textContent = characters[i].name;
+            const col = characters[i].color;
+            charDiv.style.color = rgbaToHex(col.r, col.g, col.b);
+
+            charDiv.addEventListener('click', () => {
+                charIndex = i;
+                loadSequence(sceneIndex, editIndex);
+            });
+        }
+
+        listDiv.appendChild(charDiv);
+    }
+}
+
 function setEditLine(lineIndex)
 {
     loadSequence(sceneIndex, lineIndex)
@@ -545,7 +833,9 @@ function loadSequence(index, lineIndex, overrideTitleAbort = false)
     }
     sceneIndex = index;
     editIndex = lineIndex;
-    renderSidebar();
+
+    renderCharacterSidebar();
+    renderSequenceSidebar();
     renderEditor();
 }
 
@@ -576,7 +866,7 @@ function saveTitle()
     title.contentEditable = false;
     title.spellcheck = false;
     setHasChanges(true);
-    renderSidebar();
+    renderSequenceSidebar();
 }
 
 function abortTitle()
@@ -633,6 +923,37 @@ function swapSequences(indexA, indexB)
     loadSequence(indexB, editIndex);
 }
 
+function removeCharacterAt(index)
+{
+    if (proj === null || charIndex < 0)
+        return;
+
+    if (index < 0 || index >= proj.characters().data.length)
+        return;
+
+    proj.characters().data.splice(index, 1);
+    charIndex = -1;
+    setHasChanges(true);
+    loadSequence(sceneIndex, editIndex);
+}
+
+function swapCharacters(indexA, indexB)
+{
+    if (proj === null || charIndex < 0)
+        return;
+
+    if (indexA >= proj.characters().data.length || indexA < 0
+        || indexB >= proj.characters().data.length || indexB < 0)
+    {
+        return;
+    }
+
+    [proj.characters().data[indexA], proj.characters().data[indexB]] = [proj.characters().data[indexB], proj.characters().data[indexA]];
+    charIndex = indexB;
+    setHasChanges(true);
+    loadSequence(sceneIndex, editIndex);
+}
+
 async function displayProject(path)
 {
     proj = new Project();
@@ -672,9 +993,11 @@ async function displayProject(path)
         addNewSequence();
     });
 
-    initializeSidebarControls();
+    initializeSidebarControlsLeft();
+    initializeSidebarControlsRight();
 
-    renderSidebar();
+    renderCharacterSidebar();
+    renderSequenceSidebar();
     renderEditor();
 }
 

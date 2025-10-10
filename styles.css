@@ -33,6 +33,17 @@ body {
     align-items: center;
 }
 
+.section-heading-char {
+    font-family: var(--non-monospace-font);
+    display: flex;
+    align-items: center;
+}
+
+.section-heading-char h3{
+    margin-left: 20px;
+}
+
+
 .page-title-editing {
     outline: none;
     cursor: text;
@@ -110,8 +121,8 @@ body {
 }
 
 .sequence-entry:hover {
-    background-color: #333;  /* change to any color you like */
-    color: #fff;             /* optional: change text color on hover */
+    background-color: #333;
+    color: #fff;
 }
 
 .sequence-entry-selected {
@@ -128,8 +139,8 @@ body {
 }
 
 .sequence-entry-selected:hover {
-    background-color: #333;  /* change to any color you like */
-    color: #fff;             /* optional: change text color on hover */
+    background-color: #333;
+    color: #fff;
 }
 
 .new-sequence-button {
@@ -146,6 +157,57 @@ body {
 
 .new-sequence-button:hover {
     background-color: #3e3e42;
+}
+
+.character-list {
+    padding: 0px;
+    scrollbar-color: #444 #252526;
+    margin-bottom: 10px;
+    font-family: var(--monospace-font);
+}
+
+input[type="color"] {
+  width: 50px; 
+  height: 30px; 
+  border: 1px solid #555;
+  border-radius: 5px;
+  background-color: #333;
+  padding: 2px;
+  cursor: pointer;
+  margin-left: 5px;
+}
+
+.char-entry {
+    cursor: pointer;
+    user-select: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    transition: background-color 0.2s;
+    overflow-x: hidden;
+    overflow-y: auto;
+    font-weight: bold;
+}
+
+.char-entry:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+.char-entry-selected {
+    cursor: pointer;
+    user-select: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    background-color: #1e1e1e;
+    border: 2px solid #555;
+    transition: background-color 0.2s;
+    overflow-x: hidden;
+    overflow-y: auto;
+}
+
+.char-entry-selected:hover {
+    background-color: #333;
+    color: #fff;
 }
 
 .resize-handle {
@@ -257,6 +319,7 @@ body {
     border: 2px solid #3e3e42;
     border-radius: 8px;
     width: 700px;
+    margin-bottom: 10px;
 }
 
 .line-selected-content {

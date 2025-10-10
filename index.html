@@ -9,23 +9,19 @@
 <body>
     <div class="app-container">
         <!-- Sidebar -->
-        <div class="sidebar" id="sidebar">
+        <div class="sidebar" id="sidebar-left">
             <div class="section-heading">
                 <h3 class="scene-title">Sequences</h3>
-                <div class="collapse-sidebar" id="collapse-sidebar">
-                    <img src="assets/collapse-left-icon.png" class="collapse-sidebar-arrow">
+                <div class="collapse-sidebar" id="collapse-sidebar-left">
+                    <img src="assets/collapse-left-icon.png">
                 </div>
-                <!--
-                <button id="new-page-btn" class="new-page-btn">+</button>
-                <button id="sidebar-collapse" class="sidebar-collapse">⟨</button>
-            -->
             </div>
             <div class="sequence-list" id="sequence-list"></div>
             <div class="new-sequence-button" id="new-sequence-button">New Sequence</div>
         </div>
 
         <!-- Resize handle -->
-        <div class="resize-handle" id="resize-handle"></div>
+        <div class="resize-handle" id="resize-handle-left"></div>
 
         <!-- Main content -->
         <div class="main-content" id="main-content">
@@ -36,8 +32,22 @@
             <div id="editor" class="editor" contenteditable="false">Test Dialogue</div>
         </div>
 
-        <!-- Collapsed sidebar toggle -->
-        <button id="sidebar-expand" class="sidebar-expand" style="display: none;">⟩</button>
+        <!-- Resize handle -->
+        <div class="resize-handle" id="resize-handle-right"></div>
+
+
+        <!-- Sidebar -->
+        <div class="sidebar" id="sidebar-right">
+            <div class="section-heading-char">
+                <div class="collapse-sidebar" id="collapse-sidebar-right">
+                    <img src="assets/collapse-right-icon.png">
+                </div>
+                <h3 class="scene-title">Characters</h3>
+            </div>
+            <div class="character-list" id="character-list"></div>
+            <div class="new-sequence-button" id="new-character-button">New Character</div>
+        </div>
+
     </div>
     <script src="renderer.js"></script>
 </body>

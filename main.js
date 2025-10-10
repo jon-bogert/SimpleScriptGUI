@@ -100,6 +100,15 @@ function createWindow()
                 { type: 'separator'},
                 { role: 'toggledevtools'}
             ]
+        },
+        {
+            label: 'Help',
+            submenu: [
+                {
+                    label: `Version ${app.getVersion()}`,
+                    enabled: false
+                }
+            ]
         }
     ];
 
