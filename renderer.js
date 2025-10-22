@@ -38,6 +38,19 @@ function hexToRgba(hex)
     return { r, g, b, a };
 }
 
+function focusAtEnd(element)
+{
+    element.focus();
+
+    const range = document.createRange();
+    range.selectNodeContents(element);
+    range.collapse(false);
+
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+}
+
 function setHasChanges(v)
 {
     if (v !== hasChanges)
@@ -271,8 +284,26 @@ function renderEditor()
     let lastCharacter = "";
     let wasLastBlockDialogue = false;
 
-    const insertDiv = createInsertLine(0);
-    editorDiv.appendChild(insertDiv);
+    if (seq.blocks.length === 0)
+    {
+        const addSlugButton = document.createElement('div');
+        addSlugButton.className = 'new-sequence-button';
+        addSlugButton.textContent = "Add Slugline";
+        addSlugButton.style.marginTop = '20px';
+
+        addSlugButton.addEventListener('click', () => {
+            addLine(0, 'Slug');
+            setHasChanges(true);
+        });
+
+        editorDiv.appendChild(addSlugButton);
+        return;
+    }
+    else
+    {
+        const insertDiv = createInsertLine(0);
+        editorDiv.appendChild(insertDiv);
+    }
 
     // Text Block Loop
     for (let i = 0; i < seq.blocks.length; ++i)
@@ -371,6 +402,7 @@ function renderEditor()
                     if (event.key === 'Enter')
                     {
                         event.preventDefault();
+                        loadSequence(sceneIndex, -1);
                     }
                 });
 
@@ -378,7 +410,7 @@ function renderEditor()
 
                 if (setCursorCharacter)
                 {
-                    requestAnimationFrame(() => charField.focus());
+                    requestAnimationFrame(() => focusAtEnd(charField));
                     setCursorCharacter = false;
                 }
             }
@@ -415,7 +447,7 @@ function renderEditor()
 
             if (setCursorContents)
             {
-                requestAnimationFrame(() => lineContent.focus());
+                requestAnimationFrame(() => focusAtEnd(lineContent));
                 setCursorContents = false;
             }
 
@@ -798,6 +830,7 @@ function renderCharacterSidebar()
 
 function setEditLine(lineIndex)
 {
+    setCursorContents = true;
     loadSequence(sceneIndex, lineIndex)
 }
 
