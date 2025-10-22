@@ -7,6 +7,10 @@ let editIndex = -1;
 let charIndex = -1;
 let isEditingTitle = false;
 
+let insertHovered = -1;
+let setCursorCharacter = false;
+let setCursorContents = false;
+
 let projectPath = '';
 let hasChanges = false;
 
@@ -225,6 +229,30 @@ function expandSidebarRight()
     setSidebarWidthRight(sidebarWidthRight);
 }
 
+function createInsertLine(index)
+{
+    const insertParent = document.createElement('div');
+    insertParent.className = 'insertparent';
+    insertParent.addEventListener('click', () => {
+        addLine(index);
+        setHasChanges(true);
+    });
+    insertParent.addEventListener('mouseenter', () => {
+        insertHovered = index;
+    });
+    insertParent.addEventListener('mouseleave', () => {
+        if (insertHovered != index)
+            return;
+        insertHovered = -1;
+    });
+
+    const insertLine = document.createElement('div');
+    insertLine.className = 'insertline';
+    insertParent.appendChild(insertLine);
+
+    return insertParent;
+}
+
 function renderEditor()
 {
     const editorDiv = document.getElementById('editor');
@@ -243,15 +271,8 @@ function renderEditor()
     let lastCharacter = "";
     let wasLastBlockDialogue = false;
 
-    const insertParentTop = document.createElement('div');
-    insertParentTop.className = 'insertparent';
-    insertParentTop.addEventListener('click', () => {
-        addLine(0);
-    });
-    const insertLineTop = document.createElement('div');
-    insertLineTop.className = 'insertline';
-    insertParentTop.appendChild(insertLineTop);
-    editorDiv.appendChild(insertParentTop);
+    const insertDiv = createInsertLine(0);
+    editorDiv.appendChild(insertDiv);
 
     // Text Block Loop
     for (let i = 0; i < seq.blocks.length; ++i)
@@ -354,6 +375,12 @@ function renderEditor()
                 });
 
                 setDiv.appendChild(charField);
+
+                if (setCursorCharacter)
+                {
+                    requestAnimationFrame(() => charField.focus());
+                    setCursorCharacter = false;
+                }
             }
 
             lineDiv.appendChild(setDiv);
@@ -385,6 +412,12 @@ function renderEditor()
             });
 
             lineDiv.appendChild(lineContent);
+
+            if (setCursorContents)
+            {
+                requestAnimationFrame(() => lineContent.focus());
+                setCursorContents = false;
+            }
 
             const buttonSize = 20;
 
@@ -441,17 +474,8 @@ function renderEditor()
             editorDiv.appendChild(lineDiv);
             
             // Insert Line
-            const insertParent = document.createElement('div');
-            insertParent.className = 'insertparent';
-            insertParent.addEventListener('click', () => {
-                addLine(i + 1);
-                setHasChanges(true);
-            });
-
-            const insertLine = document.createElement('div');
-            insertLine.className = 'insertline';
-            insertParent.appendChild(insertLine);
-            editorDiv.appendChild(insertParent);
+            const insertLine = createInsertLine(i + 1);
+            editorDiv.appendChild(insertLine);
 
             continue;
         }
@@ -509,16 +533,8 @@ function renderEditor()
         });
         editorDiv.appendChild(p);
 
-        const insertParent = document.createElement('div');
-        insertParent.className = 'insertparent';
-        insertParent.addEventListener('click', () => {
-            addLine(i + 1);
-        });
-
-        const insertLine = document.createElement('div');
-        insertLine.className = 'insertline';
-        insertParent.appendChild(insertLine);
-        editorDiv.appendChild(insertParent);
+        const insertLine = createInsertLine(i + 1);
+        editorDiv.appendChild(insertLine);
     }
 }
 
@@ -813,14 +829,23 @@ function swapBlocks(indexA, indexB)
     loadSequence(sceneIndex, indexB);
 }
 
-function addLine(index)
+function addLine(index, startType = 'Unassigned')
 {
     if (proj === null || sceneIndex < 0)
         return;
 
     let seq = proj.getSequence(sceneIndex);
 
-    seq.blocks.splice(index, 0, { type: 'Unassigned', character: '', content: '', slugCount: 1 });
+    if (startType == 'Parenthetical' || startType == 'Dialogue')
+    {
+        setCursorCharacter = true;
+    }
+    else
+    {
+        setCursorContents = true;
+    }
+
+    seq.blocks.splice(index, 0, { type: startType, character: '', content: '', slugCount: 1 });
     setHasChanges(true);
     loadSequence(sceneIndex, index);
 }
@@ -1002,6 +1027,36 @@ async function displayProject(path)
 }
 
 window.addEventListener('DOMContentLoaded', async () => {
+    document.addEventListener('keydown', (event) => {
+        if (insertHovered < 0)
+            return;
+
+        const key = event.key;
+        if (key < "1" || key > "5")
+            return;
+
+        event.preventDefault();
+
+        switch (key)
+        {
+            case "1":
+                addLine(insertHovered, 'Slug');
+                break;
+            case "2":
+                addLine(insertHovered, 'Action');
+                break;
+            case "3":
+                addLine(insertHovered, 'Parenthetical');
+                break;
+            case "4":
+                addLine(insertHovered, 'Dialogue');
+                break;
+            case "5":
+                addLine(insertHovered, 'Note');
+                break;
+        }
+    });
+
     await displayProject('');
 });
 
