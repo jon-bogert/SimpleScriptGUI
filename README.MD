@@ -15,6 +15,16 @@ The following features are provided with this application
     - Scripts blocks include: *Slug Lines*, *Action Lines*, *Parentheticals*, *Dialogue Lines*, and *Notes*
     - *Notes* only appear in the editor and will not be exported
 
+To add or remove *Script Blocks*, hover over the line between blocks with your mouse and do one of the following:
+- *Left click* - Insert empty block.
+- *Press '1' key* - Insert Slugline.
+- *Press '2' key* - Insert Action.
+- *Press '3' key* - Insert Parenthetical.
+- *Press '4' key* - Insert Dialogue.
+- *Press '5' key* - Insert Note.
+
+Press *Enter* or click outside of the edited block to apply changes, and press *Escape* to revert them.
+
 ### Missing features
 The following features are not yet implemented in the application and we would like to add them as soon as we can.
 - Export to file format
@@ -37,4 +47,4 @@ The following packages are required:
  You can start the app through: `npm start`. A `launch.json` file for VS Code is also provided for debugging both the front and backend.
 
  ### Building
- *Windows*, *macOS* and *Linux* configurations are already defined, run `npm run dist:win`, `npm run dist:mac`, or `npm run dist:linux` for your desired platform. Take note that the linux version tries to build `.AppImage`, `.deb`, and `.pacman`. You may want to remove unwanted options (or add `rpm`) as needed.
+ *Windows*, *macOS* and *Linux* configurations are already defined, run `npm run dist:win`, `npm run dist:mac`, or `npm run dist:linux` for your desired platform. Take note that the linux version tries to build `.AppImage`, `.deb`. You may want to remove unwanted options (or add `rpm`) as needed.

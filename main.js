@@ -62,9 +62,9 @@ function createWindow()
         {
             label: 'Edit',
             submenu: [
-                { role: 'undo' },
-                { role: 'redo' },
-                { type: 'separator' },
+                //{ role: 'undo' },
+                //{ role: 'redo' },
+                //{ type: 'separator' },
                 { role: 'cut' },
                 { role: 'copy' },
                 { role: 'paste' },
@@ -97,8 +97,8 @@ function createWindow()
                         win.webContents.setZoomLevel(0);
                     }
                 },
-                { type: 'separator'},
-                { role: 'toggledevtools'}
+                //{ type: 'separator'},
+                //{ role: 'toggledevtools'}
             ]
         },
         {

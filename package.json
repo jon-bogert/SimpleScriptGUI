@@ -1,9 +1,9 @@
 {
   "name": "simplescript",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A basic film script writing software",
   "license": "MIT",
-  "author": "Jon Bogert",
+  "author": "Jon Bogert <jonbogert@gmail.com>",
   "type": "commonjs",
   "main": "main.js",
   "scripts": {
@@ -47,8 +47,7 @@
     "linux": {
       "target": [
         "AppImage",
-        "deb",
-        "pacman"
+        "deb"
       ],
       "icon": "build/icons/",
       "category": "Utility",
